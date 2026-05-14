@@ -408,6 +408,14 @@ export default function App() {
               (a) => a.status === 'archived' || a.status === 'saved_to_instapaper',
             );
             const notInterestedArticles = filtered.filter((a) => a.status === 'not_interested');
+            const anyFilterActive = !!(filterCategory || filterPublication || filterHearted || filterSearch);
+            const NOT_INTERESTED_CAP = 24;
+            const notInterestedVisible = anyFilterActive
+              ? notInterestedArticles
+              : notInterestedArticles.slice(0, NOT_INTERESTED_CAP);
+            const notInterestedHidden = anyFilterActive
+              ? 0
+              : Math.max(0, notInterestedArticles.length - NOT_INTERESTED_CAP);
             return (
               <div className="space-y-10">
                 {readArticles.length > 0 && (
@@ -433,13 +441,13 @@ export default function App() {
                     </div>
                   </section>
                 )}
-                {notInterestedArticles.length > 0 && (
+                {notInterestedVisible.length > 0 && (
                   <section>
                     <p className="mb-4 text-xs font-medium uppercase tracking-widest text-stone-400 dark:text-stone-500">
                       Not Interested
                     </p>
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                      {notInterestedArticles.map((article) => {
+                      {notInterestedVisible.map((article) => {
                         const idx = filtered.indexOf(article);
                         return (
                           <ArticleCard
@@ -454,6 +462,11 @@ export default function App() {
                         );
                       })}
                     </div>
+                    {notInterestedHidden > 0 && (
+                      <p className="mt-6 text-center text-xs text-stone-400 dark:text-stone-500">
+                        Showing {NOT_INTERESTED_CAP} of {notInterestedArticles.length} — use filters to search further
+                      </p>
+                    )}
                   </section>
                 )}
               </div>
