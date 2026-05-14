@@ -4,9 +4,11 @@ interface FilterBarProps {
   activeCategory: string | null;
   activePublication: string | null;
   filterHearted: boolean;
+  searchQuery: string;
   onCategoryChange: (cat: string | null) => void;
   onPublicationChange: (pub: string | null) => void;
   onHeartedChange: (val: boolean) => void;
+  onSearchChange: (q: string) => void;
 }
 
 function Chevron() {
@@ -93,15 +95,51 @@ export function FilterBar({
   activeCategory,
   activePublication,
   filterHearted,
+  searchQuery,
   onCategoryChange,
   onPublicationChange,
   onHeartedChange,
+  onSearchChange,
 }: FilterBarProps) {
-  const anyActive = activeCategory !== null || activePublication !== null || filterHearted;
+  const anyActive = activeCategory !== null || activePublication !== null || filterHearted || searchQuery !== '';
 
   return (
     <div className="flex flex-wrap items-center gap-2 py-2">
       <FilterIcon />
+
+      {/* Search input */}
+      <div className="relative inline-flex items-center">
+        <svg
+          width="11"
+          height="11"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className="pointer-events-none absolute left-2.5 text-stone-400 dark:text-stone-500"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search"
+          aria-label="Search articles"
+          className={[
+            'h-7 w-32 rounded-full border pl-7 pr-2.5 text-xs font-medium leading-none transition',
+            'focus:w-48 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:ring-offset-0 dark:focus:ring-stone-500',
+            '[transition:width_150ms_ease,border-color_150ms,background-color_150ms]',
+            searchQuery
+              ? 'border-stone-400 bg-stone-100 text-stone-900 dark:border-stone-500 dark:bg-stone-800 dark:text-stone-100'
+              : 'border-stone-200 bg-white text-stone-500 placeholder:text-stone-400 hover:border-stone-300 hover:text-stone-700 dark:border-stone-700 dark:bg-transparent dark:text-stone-400 dark:placeholder:text-stone-600 dark:hover:border-stone-500',
+          ].join(' ')}
+        />
+      </div>
 
       {/* Favorites toggle chip */}
       <button
@@ -144,6 +182,7 @@ export function FilterBar({
             onCategoryChange(null);
             onPublicationChange(null);
             onHeartedChange(false);
+            onSearchChange('');
           }}
           className="inline-flex h-7 items-center gap-1 rounded-full px-2 text-xs text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-300"
         >
