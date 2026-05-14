@@ -109,7 +109,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100">
-      <div className="px-4 pb-24 pt-8 sm:px-6 sm:pt-12 lg:px-10">
+      <div className="mx-auto max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12 lg:mx-0 lg:max-w-none lg:px-10">
         {/* Header */}
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
@@ -155,7 +155,7 @@ export default function App() {
             description={EMPTY_STATES[activeTab].description}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {visible.map((article) => (
               <ArticleCard
                 key={article.id}
