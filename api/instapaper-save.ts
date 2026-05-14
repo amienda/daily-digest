@@ -70,6 +70,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
+  // Reject calls that don't carry the app secret (set APP_SECRET in Vercel env vars).
+  // If APP_SECRET is not configured the check is skipped so deploys without it still work.
+  const expectedSecret = process.env.APP_SECRET;
+  const sentSecret = req.headers['x-app-secret'];
+  if (expectedSecret && sentSecret !== expectedSecret) {
+    return res.status(403).json({ success: false, error: 'Forbidden.' });
+  }
+
   // Vercel parses JSON bodies automatically when Content-Type is application/json.
   const body = (req.body ?? {}) as { url?: unknown };
   const url = typeof body.url === 'string' ? body.url.trim() : '';

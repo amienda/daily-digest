@@ -3,9 +3,11 @@ import { ArticleCard } from './components/ArticleCard';
 import { DarkModeToggle } from './components/DarkModeToggle';
 import { EmptyState } from './components/EmptyState';
 import { FilterBar } from './components/FilterBar';
+import { OwnerGate } from './components/OwnerGate';
 import { Tabs } from './components/Tabs';
 import { ToastViewport, type ToastMessage, type ToastVariant } from './components/Toast';
 import { useArticles } from './hooks/useArticles';
+import { useOwnerMode } from './hooks/useOwnerMode';
 import type { Article, TabKey } from './lib/types';
 
 const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
@@ -25,6 +27,7 @@ const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
 
 export default function App() {
   const { articles, loading, error, updateStatus } = useArticles();
+  const { isOwner, unlock, lock } = useOwnerMode();
   const [activeTab, setActiveTab] = useState<TabKey>('today');
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [filterPublication, setFilterPublication] = useState<string | null>(null);
@@ -109,7 +112,10 @@ export default function App() {
       try {
         const res = await fetch('/api/instapaper-save', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-App-Secret': import.meta.env.VITE_APP_SECRET ?? '',
+          },
           body: JSON.stringify({ url: article.url }),
         });
 
@@ -155,7 +161,10 @@ export default function App() {
                   : `${counts.archive} in the archive`}
             </p>
           </div>
-          <DarkModeToggle />
+          <div className="flex items-center gap-2">
+            <OwnerGate isOwner={isOwner} onUnlock={unlock} onLock={lock} />
+            <DarkModeToggle />
+          </div>
         </header>
 
         {/* Tabs */}
@@ -208,6 +217,7 @@ export default function App() {
               <ArticleCard
                 key={article.id}
                 article={article}
+                isOwner={isOwner}
                 onUpdateStatus={handleUpdateStatus}
                 onInstapaperSave={handleInstapaperSave}
               />

@@ -4,6 +4,7 @@ import { getCategoryStyle } from '../lib/categories';
 
 interface ArticleCardProps {
   article: Article;
+  isOwner: boolean;
   onUpdateStatus: (id: string, status: ArticleStatus) => Promise<void>;
   onInstapaperSave: (article: Article) => Promise<void>;
 }
@@ -20,7 +21,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: ArticleCardProps) {
+export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave }: ArticleCardProps) {
   const [pending, setPending] = useState<PendingAction>(null);
   const cat = getCategoryStyle(article.category);
   const disabled = pending !== null;
@@ -80,7 +81,7 @@ export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: Artic
         {article.summary}
       </p>
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      {isOwner && <div className="mt-5 flex flex-wrap gap-2">
         {isToday && (
           <>
             <ActionButton
@@ -141,7 +142,7 @@ export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: Artic
             Move to Today
           </ActionButton>
         )}
-      </div>
+      </div>}
     </article>
   );
 }
