@@ -68,6 +68,7 @@ export default function App() {
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [filterPublication, setFilterPublication] = useState<string | null>(null);
   const [filterHearted, setFilterHearted] = useState(false);
+  const [filterSearch, setFilterSearch] = useState('');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [focusedCardIndex, setFocusedCardIndex] = useState<number | null>(null);
   const [shortcutsVisible, setShortcutsVisible] = useState(false);
@@ -76,6 +77,7 @@ export default function App() {
     setActiveTab(tab);
     setFilterCategory(null);
     setFilterPublication(null);
+    setFilterSearch('');
     setFocusedCardIndex(null);
   }
 
@@ -139,9 +141,14 @@ export default function App() {
         if (filterCategory && a.category?.toLowerCase() !== filterCategory.toLowerCase())
           return false;
         if (filterPublication && a.publication !== filterPublication) return false;
+        if (filterSearch) {
+          const q = filterSearch.toLowerCase();
+          if (!a.headline.toLowerCase().includes(q) && !a.summary.toLowerCase().includes(q))
+            return false;
+        }
         return true;
       }),
-    [visible, filterHearted, filterCategory, filterPublication],
+    [visible, filterHearted, filterCategory, filterPublication, filterSearch],
   );
 
   // Clamp focus when articles leave the list (triage action or filter change).
@@ -359,9 +366,11 @@ export default function App() {
               activeCategory={filterCategory}
               activePublication={filterPublication}
               filterHearted={filterHearted}
+              searchQuery={filterSearch}
               onCategoryChange={setFilterCategory}
               onPublicationChange={setFilterPublication}
               onHeartedChange={setFilterHearted}
+              onSearchChange={setFilterSearch}
             />
           </div>
         )}
