@@ -13,6 +13,7 @@ export interface Article {
   summary: string;
   created_at: string;
   status: ArticleStatus;
+  hearted: boolean;
 }
 
 export type TabKey = 'today' | 'reading_list' | 'archive';

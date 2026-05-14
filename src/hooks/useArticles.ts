@@ -8,6 +8,7 @@ interface UseArticlesResult {
   error: string | null;
   refetch: () => Promise<void>;
   updateStatus: (id: string, status: ArticleStatus) => Promise<void>;
+  toggleHeart: (id: string, hearted: boolean) => Promise<void>;
 }
 
 export function useArticles(): UseArticlesResult {
@@ -54,5 +55,21 @@ export function useArticles(): UseArticlesResult {
     [articles],
   );
 
-  return { articles, loading, error, refetch: fetchAll, updateStatus };
+  const toggleHeart = useCallback(
+    async (id: string, hearted: boolean) => {
+      const prev = articles;
+      setArticles((curr) => curr.map((a) => (a.id === id ? { ...a, hearted } : a)));
+      const { error: err } = await supabase
+        .from('articles')
+        .update({ hearted })
+        .eq('id', id);
+      if (err) {
+        setArticles(prev);
+        throw new Error(err.message);
+      }
+    },
+    [articles],
+  );
+
+  return { articles, loading, error, refetch: fetchAll, updateStatus, toggleHeart };
 }

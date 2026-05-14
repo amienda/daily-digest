@@ -3,8 +3,10 @@ interface FilterBarProps {
   publications: string[];
   activeCategory: string | null;
   activePublication: string | null;
+  filterHearted: boolean;
   onCategoryChange: (cat: string | null) => void;
   onPublicationChange: (pub: string | null) => void;
+  onHeartedChange: (val: boolean) => void;
 }
 
 function Chevron() {
@@ -90,14 +92,36 @@ export function FilterBar({
   publications,
   activeCategory,
   activePublication,
+  filterHearted,
   onCategoryChange,
   onPublicationChange,
+  onHeartedChange,
 }: FilterBarProps) {
-  const anyActive = activeCategory !== null || activePublication !== null;
+  const anyActive = activeCategory !== null || activePublication !== null || filterHearted;
 
   return (
     <div className="flex flex-wrap items-center gap-2 py-2">
       <FilterIcon />
+
+      {/* Hearted toggle chip */}
+      <button
+        type="button"
+        onClick={() => onHeartedChange(!filterHearted)}
+        aria-pressed={filterHearted}
+        className={[
+          'inline-flex h-7 items-center gap-1.5 rounded-full border pl-2 pr-2.5 text-xs font-medium transition',
+          'focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-0',
+          filterHearted
+            ? 'border-red-200 bg-red-50 text-red-600 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400'
+            : 'border-stone-200 bg-white text-stone-500 hover:border-stone-300 hover:text-stone-700 dark:border-stone-700 dark:bg-transparent dark:text-stone-400 dark:hover:border-stone-500',
+        ].join(' ')}
+      >
+        <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+          fill={filterHearted ? 'currentColor' : 'none'}>
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+        Hearted
+      </button>
 
       <ChipSelect
         label="Category"
@@ -119,6 +143,7 @@ export function FilterBar({
           onClick={() => {
             onCategoryChange(null);
             onPublicationChange(null);
+            onHeartedChange(false);
           }}
           className="inline-flex h-7 items-center gap-1 rounded-full px-2 text-xs text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-300"
         >

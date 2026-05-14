@@ -26,11 +26,12 @@ const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
 };
 
 export default function App() {
-  const { articles, loading, error, updateStatus } = useArticles();
+  const { articles, loading, error, updateStatus, toggleHeart } = useArticles();
   const { isOwner, unlock, lock } = useOwnerMode();
   const [activeTab, setActiveTab] = useState<TabKey>('today');
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [filterPublication, setFilterPublication] = useState<string | null>(null);
+  const [filterHearted, setFilterHearted] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   function handleTabChange(tab: TabKey) {
@@ -84,12 +85,13 @@ export default function App() {
   const filtered = useMemo(
     () =>
       visible.filter((a) => {
+        if (filterHearted && !a.hearted) return false;
         if (filterCategory && a.category?.toLowerCase() !== filterCategory.toLowerCase())
           return false;
         if (filterPublication && a.publication !== filterPublication) return false;
         return true;
       }),
-    [visible, filterCategory, filterPublication],
+    [visible, filterHearted, filterCategory, filterPublication],
   );
 
   const handleUpdateStatus = useCallback(
@@ -180,8 +182,10 @@ export default function App() {
               publications={availablePublications}
               activeCategory={filterCategory}
               activePublication={filterPublication}
+              filterHearted={filterHearted}
               onCategoryChange={setFilterCategory}
               onPublicationChange={setFilterPublication}
+              onHeartedChange={setFilterHearted}
             />
           </div>
         )}
@@ -220,6 +224,7 @@ export default function App() {
                 isOwner={isOwner}
                 onUpdateStatus={handleUpdateStatus}
                 onInstapaperSave={handleInstapaperSave}
+                onToggleHeart={toggleHeart}
               />
             ))}
           </div>

@@ -7,6 +7,7 @@ interface ArticleCardProps {
   isOwner: boolean;
   onUpdateStatus: (id: string, status: ArticleStatus) => Promise<void>;
   onInstapaperSave: (article: Article) => Promise<void>;
+  onToggleHeart: (id: string, hearted: boolean) => Promise<void>;
 }
 
 type PendingAction = 'instapaper' | 'new' | 'reading_list' | 'archived' | null;
@@ -21,7 +22,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave }: ArticleCardProps) {
+export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave, onToggleHeart }: ArticleCardProps) {
   const [pending, setPending] = useState<PendingAction>(null);
   const cat = getCategoryStyle(article.category);
   const disabled = pending !== null;
@@ -54,12 +55,37 @@ export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave
         >
           {cat.label}
         </span>
-        <time
-          dateTime={article.created_at}
-          className="text-xs text-stone-400 dark:text-stone-500"
-        >
-          {formatDate(article.created_at)}
-        </time>
+        <div className="flex items-center gap-2">
+          {/* Heart: clickable for owner, read-only indicator for visitors */}
+          {(isOwner || article.hearted) && (
+            <button
+              type="button"
+              onClick={isOwner ? () => onToggleHeart(article.id, !article.hearted) : undefined}
+              disabled={!isOwner}
+              aria-label={article.hearted ? 'Remove heart' : 'Heart this article'}
+              className={[
+                'transition',
+                isOwner
+                  ? 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 rounded-sm'
+                  : 'cursor-default',
+                article.hearted
+                  ? 'text-red-500'
+                  : 'text-stone-300 hover:text-red-400 dark:text-stone-600 dark:hover:text-red-500',
+              ].join(' ')}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                fill={article.hearted ? 'currentColor' : 'none'}>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
+          )}
+          <time
+            dateTime={article.created_at}
+            className="text-xs text-stone-400 dark:text-stone-500"
+          >
+            {formatDate(article.created_at)}
+          </time>
+        </div>
       </div>
 
       <h2 className="mt-3 font-serif text-2xl font-semibold leading-tight text-balance text-stone-900 dark:text-stone-50 sm:text-[1.65rem]">
