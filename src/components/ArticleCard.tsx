@@ -1,0 +1,133 @@
+import { useState } from 'react';
+import type { Article, ArticleStatus } from '../lib/types';
+import { getCategoryStyle } from '../lib/categories';
+
+interface ArticleCardProps {
+  article: Article;
+  onUpdateStatus: (id: string, status: ArticleStatus) => Promise<void>;
+  onInstapaperSave: (article: Article) => Promise<void>;
+}
+
+type PendingAction = 'instapaper' | 'reading_list' | 'archived' | null;
+
+export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: ArticleCardProps) {
+  const [pending, setPending] = useState<PendingAction>(null);
+  const cat = getCategoryStyle(article.category);
+
+  const disabled = pending !== null;
+
+  async function handle(action: Exclude<PendingAction, null>) {
+    if (disabled) return;
+    setPending(action);
+    try {
+      if (action === 'instapaper') {
+        await onInstapaperSave(article);
+      } else {
+        await onUpdateStatus(article.id, action);
+      }
+    } catch {
+      // Errors surface as toasts from App; just reset local pending state.
+    } finally {
+      setPending(null);
+    }
+  }
+
+  return (
+    <article className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-stone-800 dark:bg-stone-900 sm:p-6">
+      <div className="flex items-center justify-between gap-3">
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium tracking-tight ${cat.pill}`}
+        >
+          {cat.label}
+        </span>
+      </div>
+
+      <h2 className="mt-3 font-serif text-2xl font-semibold leading-tight text-balance text-stone-900 dark:text-stone-50 sm:text-[1.65rem]">
+        <a
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline-offset-4 hover:underline focus-visible:underline focus-visible:outline-none"
+        >
+          {article.headline}
+        </a>
+      </h2>
+
+      <p className="mt-1 text-sm italic text-stone-500 dark:text-stone-400">
+        {article.publication}
+      </p>
+
+      <p className="mt-3 max-w-prose text-[0.95rem] leading-relaxed text-stone-700 dark:text-stone-300">
+        {article.summary}
+      </p>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        <ActionButton
+          variant="primary"
+          loading={pending === 'instapaper'}
+          disabled={disabled}
+          onClick={() => handle('instapaper')}
+        >
+          Save to Instapaper
+        </ActionButton>
+        <ActionButton
+          variant="secondary"
+          loading={pending === 'reading_list'}
+          disabled={disabled}
+          onClick={() => handle('reading_list')}
+        >
+          Reading List
+        </ActionButton>
+        <ActionButton
+          variant="ghost"
+          loading={pending === 'archived'}
+          disabled={disabled}
+          onClick={() => handle('archived')}
+        >
+          Not Interested
+        </ActionButton>
+      </div>
+    </article>
+  );
+}
+
+interface ActionButtonProps {
+  variant: 'primary' | 'secondary' | 'ghost';
+  loading: boolean;
+  disabled: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+const VARIANT_CLASSES: Record<ActionButtonProps['variant'], string> = {
+  primary:
+    'bg-stone-900 text-stone-50 hover:bg-stone-800 dark:bg-stone-50 dark:text-stone-900 dark:hover:bg-stone-200',
+  secondary:
+    'border border-stone-200 bg-white text-stone-800 hover:bg-stone-100 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800',
+  ghost:
+    'text-stone-500 hover:bg-stone-100 hover:text-stone-800 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-200',
+};
+
+function ActionButton({ variant, loading, disabled, onClick, children }: ActionButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        'tap-target inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition',
+        'disabled:cursor-not-allowed disabled:opacity-60',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 dark:focus-visible:ring-stone-500',
+        VARIANT_CLASSES[variant],
+      ].join(' ')}
+    >
+      {loading && (
+        <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.25" strokeWidth="4" />
+          <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </svg>
+      )}
+      <span>{children}</span>
+    </button>
+  );
+}
