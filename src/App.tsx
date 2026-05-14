@@ -69,6 +69,9 @@ export default function App() {
   const [filterPublication, setFilterPublication] = useState<string | null>(null);
   const [filterHearted, setFilterHearted] = useState(false);
   const [filterSearch, setFilterSearch] = useState('');
+  const [lastOpenedId, setLastOpenedId] = useState<string | null>(
+    () => localStorage.getItem('lastOpenedArticleId'),
+  );
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [focusedCardIndex, setFocusedCardIndex] = useState<number | null>(null);
   const [shortcutsVisible, setShortcutsVisible] = useState(false);
@@ -192,6 +195,10 @@ export default function App() {
                 : 'Archived';
         const variant = status === 'archived' || status === 'not_interested' ? 'info' : 'success';
         pushToast(message, variant, shortTitle, undoAction);
+        if (id === lastOpenedId) {
+          setLastOpenedId(null);
+          localStorage.removeItem('lastOpenedArticleId');
+        }
       } catch (e) {
         pushToast(e instanceof Error ? e.message : 'Update failed', 'error');
         throw e;
@@ -263,6 +270,11 @@ export default function App() {
     },
     [articles, toggleHeart, pushToast],
   );
+
+  const handleLinkClick = useCallback((id: string) => {
+    setLastOpenedId(id);
+    localStorage.setItem('lastOpenedArticleId', id);
+  }, []);
 
   useKeyboardTriage({
     articles: filtered,
@@ -432,9 +444,11 @@ export default function App() {
                             article={article}
                             isOwner={isOwner}
                             isFocused={idx === focusedCardIndex}
+                            isLastOpened={article.id === lastOpenedId}
                             onUpdateStatus={handleUpdateStatus}
                             onInstapaperSave={handleInstapaperSave}
                             onToggleHeart={handleToggleHeart}
+                            onLinkClick={handleLinkClick}
                           />
                         );
                       })}
@@ -455,9 +469,11 @@ export default function App() {
                             article={article}
                             isOwner={isOwner}
                             isFocused={idx === focusedCardIndex}
+                            isLastOpened={article.id === lastOpenedId}
                             onUpdateStatus={handleUpdateStatus}
                             onInstapaperSave={handleInstapaperSave}
                             onToggleHeart={handleToggleHeart}
+                            onLinkClick={handleLinkClick}
                           />
                         );
                       })}
@@ -480,9 +496,11 @@ export default function App() {
                 article={article}
                 isOwner={isOwner}
                 isFocused={idx === focusedCardIndex}
+                isLastOpened={article.id === lastOpenedId}
                 onUpdateStatus={handleUpdateStatus}
                 onInstapaperSave={handleInstapaperSave}
                 onToggleHeart={handleToggleHeart}
+                onLinkClick={handleLinkClick}
               />
             ))}
           </div>
