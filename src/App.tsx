@@ -64,7 +64,8 @@ export default function App() {
     async (id: string, status: Article['status']) => {
       try {
         await updateStatus(id, status);
-        if (status === 'reading_list') pushToast('Saved to reading list', 'success');
+        if (status === 'new') pushToast('Moved back to Today', 'success');
+        else if (status === 'reading_list') pushToast('Saved to reading list', 'success');
         else if (status === 'archived') pushToast('Archived', 'info');
       } catch (e) {
         pushToast(e instanceof Error ? e.message : 'Update failed', 'error');

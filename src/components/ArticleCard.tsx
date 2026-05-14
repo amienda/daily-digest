@@ -8,12 +8,21 @@ interface ArticleCardProps {
   onInstapaperSave: (article: Article) => Promise<void>;
 }
 
-type PendingAction = 'instapaper' | 'reading_list' | 'archived' | null;
+type PendingAction = 'instapaper' | 'new' | 'reading_list' | 'archived' | null;
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  return d.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric',
+  });
+}
 
 export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: ArticleCardProps) {
   const [pending, setPending] = useState<PendingAction>(null);
   const cat = getCategoryStyle(article.category);
-
   const disabled = pending !== null;
 
   async function handle(action: Exclude<PendingAction, null>) {
@@ -32,6 +41,10 @@ export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: Artic
     }
   }
 
+  const isToday = article.status === 'new';
+  const isReadingList = article.status === 'reading_list';
+  const isArchive = article.status === 'archived' || article.status === 'saved_to_instapaper';
+
   return (
     <article className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-stone-800 dark:bg-stone-900 sm:p-6">
       <div className="flex items-center justify-between gap-3">
@@ -40,6 +53,12 @@ export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: Artic
         >
           {cat.label}
         </span>
+        <time
+          dateTime={article.created_at}
+          className="text-xs text-stone-400 dark:text-stone-500"
+        >
+          {formatDate(article.created_at)}
+        </time>
       </div>
 
       <h2 className="mt-3 font-serif text-2xl font-semibold leading-tight text-balance text-stone-900 dark:text-stone-50 sm:text-[1.65rem]">
@@ -62,30 +81,66 @@ export function ArticleCard({ article, onUpdateStatus, onInstapaperSave }: Artic
       </p>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        <ActionButton
-          variant="primary"
-          loading={pending === 'instapaper'}
-          disabled={disabled}
-          onClick={() => handle('instapaper')}
-        >
-          Save to Instapaper
-        </ActionButton>
-        <ActionButton
-          variant="secondary"
-          loading={pending === 'reading_list'}
-          disabled={disabled}
-          onClick={() => handle('reading_list')}
-        >
-          Reading List
-        </ActionButton>
-        <ActionButton
-          variant="ghost"
-          loading={pending === 'archived'}
-          disabled={disabled}
-          onClick={() => handle('archived')}
-        >
-          Not Interested
-        </ActionButton>
+        {isToday && (
+          <>
+            <ActionButton
+              variant="primary"
+              loading={pending === 'instapaper'}
+              disabled={disabled}
+              onClick={() => handle('instapaper')}
+            >
+              Save to Instapaper
+            </ActionButton>
+            <ActionButton
+              variant="secondary"
+              loading={pending === 'reading_list'}
+              disabled={disabled}
+              onClick={() => handle('reading_list')}
+            >
+              Reading List
+            </ActionButton>
+            <ActionButton
+              variant="ghost"
+              loading={pending === 'archived'}
+              disabled={disabled}
+              onClick={() => handle('archived')}
+            >
+              Not Interested
+            </ActionButton>
+          </>
+        )}
+
+        {isReadingList && (
+          <>
+            <ActionButton
+              variant="secondary"
+              loading={pending === 'new'}
+              disabled={disabled}
+              onClick={() => handle('new')}
+            >
+              Move to Today
+            </ActionButton>
+            <ActionButton
+              variant="ghost"
+              loading={pending === 'archived'}
+              disabled={disabled}
+              onClick={() => handle('archived')}
+            >
+              Not Interested
+            </ActionButton>
+          </>
+        )}
+
+        {isArchive && (
+          <ActionButton
+            variant="secondary"
+            loading={pending === 'new'}
+            disabled={disabled}
+            onClick={() => handle('new')}
+          >
+            Move to Today
+          </ActionButton>
+        )}
       </div>
     </article>
   );
