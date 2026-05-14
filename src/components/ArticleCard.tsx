@@ -6,9 +6,11 @@ interface ArticleCardProps {
   article: Article;
   isOwner: boolean;
   isFocused?: boolean;
+  isLastOpened?: boolean;
   onUpdateStatus: (id: string, status: ArticleStatus) => Promise<void>;
   onInstapaperSave: (article: Article) => Promise<void>;
   onToggleHeart: (id: string, hearted: boolean) => Promise<void>;
+  onLinkClick: (id: string) => void;
 }
 
 type PendingAction = 'instapaper' | 'new' | 'reading_list' | 'archived' | 'not_interested' | null;
@@ -23,7 +25,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatus, onInstapaperSave, onToggleHeart }: ArticleCardProps) {
+export function ArticleCard({ article, isOwner, isFocused = false, isLastOpened = false, onUpdateStatus, onInstapaperSave, onToggleHeart, onLinkClick }: ArticleCardProps) {
   const [pending, setPending] = useState<PendingAction>(null);
   const articleRef = useRef<HTMLElement>(null);
   const cat = getCategoryStyle(article.category);
@@ -62,7 +64,9 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
         'group rounded-2xl border p-5 transition sm:p-6',
         isFocused
           ? 'border-stone-400 bg-white hover:bg-stone-50 dark:border-stone-500 dark:bg-stone-900 dark:hover:bg-stone-800'
-          : 'border-stone-200 bg-white hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:hover:bg-stone-800',
+          : isLastOpened
+            ? 'border-amber-300 bg-amber-50/50 hover:bg-amber-50 dark:border-amber-700/50 dark:bg-amber-950/20 dark:hover:bg-amber-950/30'
+            : 'border-stone-200 bg-white hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:hover:bg-stone-800',
       ].join(' ')}
     >
       <div className="flex items-center justify-between gap-3">
@@ -121,6 +125,7 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => onLinkClick(article.id)}
           className="underline-offset-4 hover:underline focus-visible:underline focus-visible:outline-none"
         >
           {article.headline}
