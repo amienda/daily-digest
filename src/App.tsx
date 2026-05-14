@@ -15,6 +15,25 @@ function truncate(s: string, max: number) {
   return s.length > max ? s.slice(0, max) + '…' : s;
 }
 
+function DoneForToday({ readingList, archive }: { readingList: number; archive: number }) {
+  const parts: string[] = [];
+  if (readingList > 0) parts.push(`${readingList} saved for later`);
+  if (archive > 0) parts.push(`${archive} archived`);
+  return (
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-200 bg-white/40 px-6 py-16 text-center dark:border-stone-800 dark:bg-stone-900/40">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-300 dark:text-stone-600" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 12l2.5 2.5L16 9" />
+      </svg>
+      <p className="mt-4 font-serif text-xl text-stone-700 dark:text-stone-200">All done for today</p>
+      {parts.length > 0 && (
+        <p className="mt-2 text-sm text-stone-400 dark:text-stone-500">{parts.join(', ')}</p>
+      )}
+      <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">Next digest drops at 2PM.</p>
+    </div>
+  );
+}
+
 const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
   today: {
     title: 'No new articles',
@@ -25,8 +44,8 @@ const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
     description: 'Hit "Reading List" on a card to save it here for later.',
   },
   archive: {
-    title: 'Nothing archived yet',
-    description: 'Articles you skip or send to Instapaper land here.',
+    title: 'Nothing here yet',
+    description: 'Articles you skip or send to Instapaper will collect here.',
   },
 };
 
@@ -358,6 +377,8 @@ export default function App() {
               />
             ))}
           </div>
+        ) : visible.length === 0 && activeTab === 'today' && (counts.reading_list + counts.archive) > 0 ? (
+          <DoneForToday readingList={counts.reading_list} archive={counts.archive} />
         ) : visible.length === 0 ? (
           <EmptyState
             title={EMPTY_STATES[activeTab].title}

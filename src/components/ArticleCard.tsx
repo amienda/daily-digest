@@ -150,7 +150,7 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
               Reading List
             </ActionButton>
             <ActionButton
-              variant="ghost"
+              variant="destructive"
               loading={pending === 'archived'}
               disabled={disabled}
               onClick={() => handle('archived')}
@@ -171,7 +171,7 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
               Move to Today
             </ActionButton>
             <ActionButton
-              variant="ghost"
+              variant="destructive"
               loading={pending === 'archived'}
               disabled={disabled}
               onClick={() => handle('archived')}
@@ -197,7 +197,7 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
 }
 
 interface ActionButtonProps {
-  variant: 'primary' | 'secondary' | 'ghost';
+  variant: 'primary' | 'secondary' | 'ghost' | 'destructive';
   loading: boolean;
   disabled: boolean;
   onClick: () => void;
@@ -211,6 +211,8 @@ const VARIANT_CLASSES: Record<ActionButtonProps['variant'], string> = {
     'border border-stone-200 bg-white text-stone-800 hover:bg-stone-100 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800',
   ghost:
     'text-stone-500 hover:bg-stone-100 hover:text-stone-800 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-200',
+  destructive:
+    'text-red-400/80 hover:bg-red-50 hover:text-red-600 dark:text-red-500/60 dark:hover:bg-red-950/30 dark:hover:text-red-400',
 };
 
 function ActionButton({ variant, loading, disabled, onClick, children }: ActionButtonProps) {
