@@ -125,7 +125,7 @@ export function FilterBar({
           <path d="M21 21l-4.35-4.35" />
         </svg>
         <input
-          type="search"
+          type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search"
