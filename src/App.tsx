@@ -45,7 +45,7 @@ const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
   },
   archive: {
     title: 'Nothing here yet',
-    description: 'Articles you skip or send to Instapaper will collect here.',
+    description: 'Articles you read or dismiss will collect here.',
   },
 };
 
@@ -54,6 +54,7 @@ const SHORTCUTS = [
   { keys: 'K / ↑', label: 'Previous article' },
   { keys: 'I', label: 'Save to Instapaper' },
   { keys: 'R', label: 'Reading list' },
+  { keys: 'A', label: 'Archive (done)' },
   { keys: 'N', label: 'Not interested' },
   { keys: 'H', label: 'Heart / unheart' },
   { keys: '?', label: 'Show / hide shortcuts' },
@@ -104,7 +105,7 @@ export default function App() {
     for (const a of articles) {
       if (a.status === 'new') today.push(a);
       else if (a.status === 'reading_list') reading.push(a);
-      else archive.push(a); // archived OR saved_to_instapaper
+      else archive.push(a); // archived, not_interested, or saved_to_instapaper
     }
     return { today, reading, archive };
   }, [articles]);
@@ -179,8 +180,11 @@ export default function App() {
             ? 'Moved to Today'
             : status === 'reading_list'
               ? 'Saved to reading list'
-              : 'Archived';
-        pushToast(message, status === 'archived' ? 'info' : 'success', shortTitle, undoAction);
+              : status === 'not_interested'
+                ? 'Marked not interested'
+                : 'Archived';
+        const variant = status === 'archived' || status === 'not_interested' ? 'info' : 'success';
+        pushToast(message, variant, shortTitle, undoAction);
       } catch (e) {
         pushToast(e instanceof Error ? e.message : 'Update failed', 'error');
         throw e;
@@ -389,6 +393,63 @@ export default function App() {
             title="No articles match these filters"
             description="Try a different category or publication, or clear the filters."
           />
+        ) : activeTab === 'archive' ? (
+          (() => {
+            const readArticles = filtered.filter(
+              (a) => a.status === 'archived' || a.status === 'saved_to_instapaper',
+            );
+            const notInterestedArticles = filtered.filter((a) => a.status === 'not_interested');
+            return (
+              <div className="space-y-10">
+                {readArticles.length > 0 && (
+                  <section>
+                    <p className="mb-4 text-xs font-medium uppercase tracking-widest text-stone-400 dark:text-stone-500">
+                      Read
+                    </p>
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                      {readArticles.map((article) => {
+                        const idx = filtered.indexOf(article);
+                        return (
+                          <ArticleCard
+                            key={article.id}
+                            article={article}
+                            isOwner={isOwner}
+                            isFocused={idx === focusedCardIndex}
+                            onUpdateStatus={handleUpdateStatus}
+                            onInstapaperSave={handleInstapaperSave}
+                            onToggleHeart={handleToggleHeart}
+                          />
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+                {notInterestedArticles.length > 0 && (
+                  <section>
+                    <p className="mb-4 text-xs font-medium uppercase tracking-widest text-stone-400 dark:text-stone-500">
+                      Not Interested
+                    </p>
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                      {notInterestedArticles.map((article) => {
+                        const idx = filtered.indexOf(article);
+                        return (
+                          <ArticleCard
+                            key={article.id}
+                            article={article}
+                            isOwner={isOwner}
+                            isFocused={idx === focusedCardIndex}
+                            onUpdateStatus={handleUpdateStatus}
+                            onInstapaperSave={handleInstapaperSave}
+                            onToggleHeart={handleToggleHeart}
+                          />
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </div>
+            );
+          })()
         ) : (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {filtered.map((article, idx) => (

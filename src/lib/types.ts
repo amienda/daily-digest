@@ -2,6 +2,7 @@ export type ArticleStatus =
   | 'new'
   | 'reading_list'
   | 'archived'
+  | 'not_interested'
   | 'saved_to_instapaper';
 
 export interface Article {
