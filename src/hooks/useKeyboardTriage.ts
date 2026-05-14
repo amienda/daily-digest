@@ -92,13 +92,24 @@ export function useKeyboardTriage(options: KeyboardTriageOptions): void {
           break;
         }
 
+        case 'a':
+        case 'A': {
+          if (!isOwner || focusedIndex === null) break;
+          const a = articles[focusedIndex];
+          if (a?.status === 'new' || a?.status === 'reading_list') {
+            e.preventDefault();
+            void callbacks.onUpdateStatus(a.id, 'archived');
+          }
+          break;
+        }
+
         case 'n':
         case 'N': {
           if (!isOwner || focusedIndex === null) break;
           const a = articles[focusedIndex];
           if (a?.status === 'new' || a?.status === 'reading_list') {
             e.preventDefault();
-            void callbacks.onUpdateStatus(a.id, 'archived');
+            void callbacks.onUpdateStatus(a.id, 'not_interested');
           }
           break;
         }

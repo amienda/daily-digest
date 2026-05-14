@@ -11,7 +11,7 @@ interface ArticleCardProps {
   onToggleHeart: (id: string, hearted: boolean) => Promise<void>;
 }
 
-type PendingAction = 'instapaper' | 'new' | 'reading_list' | 'archived' | null;
+type PendingAction = 'instapaper' | 'new' | 'reading_list' | 'archived' | 'not_interested' | null;
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -53,7 +53,7 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
 
   const isToday = article.status === 'new';
   const isReadingList = article.status === 'reading_list';
-  const isArchive = article.status === 'archived' || article.status === 'saved_to_instapaper';
+  const isArchive = article.status === 'archived' || article.status === 'saved_to_instapaper' || article.status === 'not_interested';
 
   return (
     <article
@@ -75,6 +75,11 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
           {article.status === 'saved_to_instapaper' && (
             <span className="inline-flex items-center rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-400">
               Instapaper
+            </span>
+          )}
+          {article.status === 'not_interested' && (
+            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-400 dark:bg-red-950/30 dark:text-red-500">
+              Not interested
             </span>
           )}
         </div>
@@ -150,10 +155,18 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
               Reading List
             </ActionButton>
             <ActionButton
-              variant="destructive"
+              variant="secondary"
               loading={pending === 'archived'}
               disabled={disabled}
               onClick={() => handle('archived')}
+            >
+              Done
+            </ActionButton>
+            <ActionButton
+              variant="destructive"
+              loading={pending === 'not_interested'}
+              disabled={disabled}
+              onClick={() => handle('not_interested')}
             >
               Not Interested
             </ActionButton>
@@ -171,10 +184,18 @@ export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatu
               Move to Today
             </ActionButton>
             <ActionButton
-              variant="destructive"
+              variant="secondary"
               loading={pending === 'archived'}
               disabled={disabled}
               onClick={() => handle('archived')}
+            >
+              Done
+            </ActionButton>
+            <ActionButton
+              variant="destructive"
+              loading={pending === 'not_interested'}
+              disabled={disabled}
+              onClick={() => handle('not_interested')}
             >
               Not Interested
             </ActionButton>
