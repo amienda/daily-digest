@@ -7,12 +7,11 @@ interface FilterBarProps {
   onPublicationChange: (pub: string | null) => void;
 }
 
-// Chevron icon for the select chips.
 function Chevron() {
   return (
     <svg
-      width="10"
-      height="10"
+      width="9"
+      height="9"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -27,12 +26,11 @@ function Chevron() {
   );
 }
 
-// Funnel / filter icon.
 function FilterIcon() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="13"
+      height="13"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -63,11 +61,13 @@ function ChipSelect({ label, value, options, onChange }: ChipSelectProps) {
         onChange={(e) => onChange(e.target.value || null)}
         aria-label={label}
         className={[
-          'appearance-none cursor-pointer rounded-full border py-1 pl-3 pr-6 text-xs font-medium transition',
-          'focus:outline-none focus:ring-2 focus:ring-stone-400 dark:focus:ring-stone-500',
+          // Fixed height keeps chips consistent across browsers/OS.
+          'h-7 appearance-none cursor-pointer rounded-full border pl-2.5 pr-5',
+          'text-xs font-medium leading-none transition',
+          'focus:outline-none focus:ring-2 focus:ring-stone-400 focus:ring-offset-0 dark:focus:ring-stone-500',
           isActive
-            ? 'border-stone-900 bg-stone-900 text-stone-50 dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900'
-            : 'border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 dark:hover:bg-stone-800',
+            ? 'border-stone-400 bg-stone-100 text-stone-900 dark:border-stone-500 dark:bg-stone-800 dark:text-stone-100'
+            : 'border-stone-200 bg-white text-stone-500 hover:border-stone-300 hover:text-stone-700 dark:border-stone-700 dark:bg-transparent dark:text-stone-400 dark:hover:border-stone-500',
         ].join(' ')}
       >
         <option value="">{label}</option>
@@ -77,12 +77,8 @@ function ChipSelect({ label, value, options, onChange }: ChipSelectProps) {
           </option>
         ))}
       </select>
-      <span
-        className={[
-          'pointer-events-none absolute right-2',
-          isActive ? 'text-stone-400 dark:text-stone-600' : 'text-stone-400 dark:text-stone-500',
-        ].join(' ')}
-      >
+      {/* Chevron sits inside the right padding zone */}
+      <span className="pointer-events-none absolute right-1.5 text-stone-400 dark:text-stone-500">
         <Chevron />
       </span>
     </div>
@@ -100,7 +96,7 @@ export function FilterBar({
   const anyActive = activeCategory !== null || activePublication !== null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 py-3">
+    <div className="flex flex-wrap items-center gap-2 py-2">
       <FilterIcon />
 
       <ChipSelect
@@ -120,10 +116,13 @@ export function FilterBar({
       {anyActive && (
         <button
           type="button"
-          onClick={() => { onCategoryChange(null); onPublicationChange(null); }}
-          className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+          onClick={() => {
+            onCategoryChange(null);
+            onPublicationChange(null);
+          }}
+          className="inline-flex h-7 items-center gap-1 rounded-full px-2 text-xs text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-300"
         >
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
           Clear
