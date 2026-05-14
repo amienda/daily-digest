@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { ArticleCard } from './components/ArticleCard';
 import { DarkModeToggle } from './components/DarkModeToggle';
 import { EmptyState } from './components/EmptyState';
+import { FilterBar } from './components/FilterBar';
 import { Tabs } from './components/Tabs';
 import { ToastViewport, type ToastMessage, type ToastVariant } from './components/Toast';
 import { useArticles } from './hooks/useArticles';
@@ -25,7 +26,15 @@ const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
 export default function App() {
   const { articles, loading, error, updateStatus } = useArticles();
   const [activeTab, setActiveTab] = useState<TabKey>('today');
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [filterPublication, setFilterPublication] = useState<string | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  function handleTabChange(tab: TabKey) {
+    setActiveTab(tab);
+    setFilterCategory(null);
+    setFilterPublication(null);
+  }
 
   const pushToast = useCallback((message: string, variant: ToastVariant = 'info') => {
     setToasts((curr) => [...curr, { id: Date.now() + Math.random(), message, variant }]);
@@ -59,6 +68,26 @@ export default function App() {
       : activeTab === 'reading_list'
         ? grouped.reading
         : grouped.archive;
+
+  const availableCategories = useMemo(
+    () => [...new Set(visible.map((a) => a.category).filter(Boolean))].sort(),
+    [visible],
+  );
+  const availablePublications = useMemo(
+    () => [...new Set(visible.map((a) => a.publication).filter(Boolean))].sort(),
+    [visible],
+  );
+
+  const filtered = useMemo(
+    () =>
+      visible.filter((a) => {
+        if (filterCategory && a.category?.toLowerCase() !== filterCategory.toLowerCase())
+          return false;
+        if (filterPublication && a.publication !== filterPublication) return false;
+        return true;
+      }),
+    [visible, filterCategory, filterPublication],
+  );
 
   const handleUpdateStatus = useCallback(
     async (id: string, status: Article['status']) => {
@@ -131,8 +160,22 @@ export default function App() {
 
         {/* Tabs */}
         <div className="mb-6">
-          <Tabs active={activeTab} counts={counts} onChange={setActiveTab} />
+          <Tabs active={activeTab} counts={counts} onChange={handleTabChange} />
         </div>
+
+        {/* Filters — only shown when there are articles in this tab */}
+        {!loading && !error && visible.length > 0 && (
+          <div className="mb-5">
+            <FilterBar
+              categories={availableCategories}
+              publications={availablePublications}
+              activeCategory={filterCategory}
+              activePublication={filterPublication}
+              onCategoryChange={setFilterCategory}
+              onPublicationChange={setFilterPublication}
+            />
+          </div>
+        )}
 
         {/* Content */}
         {error ? (
@@ -154,9 +197,14 @@ export default function App() {
             title={EMPTY_STATES[activeTab].title}
             description={EMPTY_STATES[activeTab].description}
           />
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            title="No articles match these filters"
+            description="Try a different category or publication, or clear the filters."
+          />
         ) : (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {visible.map((article) => (
+            {filtered.map((article) => (
               <ArticleCard
                 key={article.id}
                 article={article}
