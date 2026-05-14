@@ -85,7 +85,7 @@ export function OwnerGate({ isOwner, onUnlock, onLock }: OwnerGateProps) {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="absolute right-0 top-12 z-20 w-52 rounded-xl border border-stone-200 bg-white p-3 shadow-xl dark:border-stone-700 dark:bg-stone-900"
+          className="absolute right-0 top-12 z-20 w-52 rounded-xl border border-stone-200 bg-white p-3 dark:border-stone-700 dark:bg-stone-900"
         >
           <p className="mb-2 text-xs font-medium text-stone-500 dark:text-stone-400">Owner PIN</p>
           <div className="flex gap-2">

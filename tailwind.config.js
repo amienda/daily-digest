@@ -6,6 +6,7 @@ export default {
     extend: {
       fontFamily: {
         serif: [
+          'Newsreader',
           'Charter',
           'Lora',
           'Georgia',

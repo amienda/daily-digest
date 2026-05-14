@@ -38,7 +38,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: 
     <div
       role="status"
       className={[
-        'pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg',
+        'pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 text-sm',
         'animate-[fadeIn_120ms_ease-out]',
         VARIANT_STYLES[toast.variant],
       ].join(' ')}

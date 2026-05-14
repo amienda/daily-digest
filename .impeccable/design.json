@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-14T00:00:00.000Z",
+  "title": "Design System: Daily Digest",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Warm Canvas",
+        "canonical": "#fafaf9",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "canvas-deep": {
+        "role": "neutral",
+        "displayName": "Deep Canvas",
+        "canonical": "#0c0a09",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#ffffff"]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Deep Paper",
+        "canonical": "#1c1917",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1c1917",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "ink-inverted": {
+        "role": "neutral",
+        "displayName": "Inverted Ink",
+        "canonical": "#fafaf9",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "#78716c",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "ink-mute": {
+        "role": "neutral",
+        "displayName": "Mute Ink",
+        "canonical": "#a8a29e",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e7e5e4",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "hairline-deep": {
+        "role": "neutral",
+        "displayName": "Deep Hairline",
+        "canonical": "#292524",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "hover-surface": {
+        "role": "neutral",
+        "displayName": "Hover Surface",
+        "canonical": "#f5f5f4",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "hover-surface-deep": {
+        "role": "neutral",
+        "displayName": "Deep Hover Surface",
+        "canonical": "#292524",
+        "tonalRamp": ["#0c0a09", "#1c1917", "#292524", "#44403c", "#78716c", "#a8a29e", "#d6d3d1", "#fafaf9"]
+      },
+      "hearted": {
+        "role": "primary",
+        "displayName": "Hearted Red",
+        "canonical": "#ef4444",
+        "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fef2f2"]
+      },
+      "hearted-soft": {
+        "role": "primary",
+        "displayName": "Hearted Soft",
+        "canonical": "#fef2f2",
+        "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fef2f2"]
+      },
+      "hearted-border": {
+        "role": "primary",
+        "displayName": "Hearted Border",
+        "canonical": "#fecaca",
+        "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fef2f2"]
+      },
+      "hearted-ink": {
+        "role": "primary",
+        "displayName": "Hearted Ink",
+        "canonical": "#dc2626",
+        "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fef2f2"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The 'Daily Digest' page title only — appears once per session."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Article card headlines. Always rendered as a link to the article."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Empty-state titles. The one place serif appears outside the page title and article headlines."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Article summaries and empty-state descriptions. Max ~65ch."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Publication name under each headline. Italic, sans. The only italic in the system."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "All UI labels — chips, tabs, buttons, count badges."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "transition-standard", "value": "150ms ease-out", "purpose": "Default state transition for color, background, border. Tailwind's `transition` utility." },
+      { "name": "toast-fade-in", "value": "120ms ease-out", "purpose": "Toast entrance only — the system's one permitted CSS-keyframe animation." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px", "purpose": "Mobile → wider phone / small tablet. Bumps card padding and headline size." },
+      { "name": "lg", "value": "1024px", "purpose": "Desktop. Activates the 2-column article grid; widens page padding." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (Save to Instapaper)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The default-positive triage action. Ink on Paper in light mode; inverted in dark.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\"><span>Save to Instapaper</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: none; border-radius: 8px; background: #1c1917; color: #fafaf9; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; transition: background 150ms ease-out, color 150ms ease-out; } .ds-btn-primary:hover { background: #292524; } .ds-btn-primary:focus-visible { outline: 2px solid #a8a29e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button (Reading List)",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Bordered alternative to primary. Used for Reading List and Move to Today.",
+      "html": "<button class=\"ds-btn-secondary\" type=\"button\"><span>Reading List</span></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 1px solid #e7e5e4; border-radius: 8px; background: #ffffff; color: #292524; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; transition: background 150ms ease-out; } .ds-btn-secondary:hover { background: #f5f5f4; } .ds-btn-secondary:focus-visible { outline: 2px solid #a8a29e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button (Not Interested)",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Visually receded archive action. Text-only at rest; gains a hover wash.",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\"><span>Not Interested</span></button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: none; border-radius: 8px; background: transparent; color: #78716c; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; transition: background 150ms ease-out, color 150ms ease-out; } .ds-btn-ghost:hover { background: #f5f5f4; color: #1c1917; } .ds-btn-ghost:focus-visible { outline: 2px solid #a8a29e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip (Hearted, active)",
+      "kind": "chip",
+      "refersTo": "chip-hearted-active",
+      "description": "The Hearted toggle in its active state — the one chip allowed to break monochrome.",
+      "html": "<button class=\"ds-chip-hearted-active\" type=\"button\" aria-pressed=\"true\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg>Hearted</button>",
+      "css": ".ds-chip-hearted-active { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px 0 8px; border: 1px solid #fecaca; border-radius: 9999px; background: #fef2f2; color: #dc2626; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; transition: background 150ms ease-out; } .ds-chip-hearted-active:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }"
+    },
+    {
+      "name": "Article Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The atomic unit of the digest. Paper on canvas; tonal hover, no shadow.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-meta\"><span class=\"ds-cat-pill\">Tech</span><span class=\"ds-card-date\">May 14</span></div><h2 class=\"ds-card-headline\"><a href=\"#\">How the FT cracked subscriptions, and what nobody else copied</a></h2><p class=\"ds-card-pub\">Stratechery</p><p class=\"ds-card-summary\">A long read on the FT's pivot from ads to subs, with a tidy breakdown of the metrics that mattered.</p></article>",
+      "css": ".ds-card { display: block; padding: 20px; background: #ffffff; border: 1px solid #e7e5e4; border-radius: 16px; transition: background 150ms ease-out; } .ds-card:hover { background: #fafaf9; } .ds-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; } .ds-cat-pill { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; background: #dcfce7; color: #166534; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: -0.01em; } .ds-card-date { color: #a8a29e; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; } .ds-card-headline { margin: 0 0 4px 0; font-family: Newsreader, Charter, Lora, Georgia, ui-serif, serif; font-size: 1.65rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; color: #1c1917; } .ds-card-headline a { color: inherit; text-decoration: none; text-underline-offset: 4px; } .ds-card-headline a:hover { text-decoration: underline; } .ds-card-pub { margin: 4px 0 0 0; color: #78716c; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.875rem; font-style: italic; } .ds-card-summary { margin: 12px 0 0 0; max-width: 65ch; color: #44403c; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.95rem; line-height: 1.6; }"
+    },
+    {
+      "name": "Tab Bar with Count Badges",
+      "kind": "nav",
+      "refersTo": "tab-count-active",
+      "description": "Three-tab horizontal nav with hairline underline divider and count pills.",
+      "html": "<nav class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab ds-tab-active\" role=\"tab\" aria-selected=\"true\"><span>Today</span><span class=\"ds-tab-count ds-tab-count-active\">12</span><span class=\"ds-tab-underline\" aria-hidden=\"true\"></span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\"><span>Reading List</span><span class=\"ds-tab-count\">5</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\"><span>Archive</span><span class=\"ds-tab-count\">48</span></button></nav>",
+      "css": ".ds-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e7e5e4; } .ds-tab { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 12px 16px; border: none; background: transparent; color: #78716c; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; cursor: pointer; transition: color 150ms ease-out; } .ds-tab:hover { color: #292524; } .ds-tab-active { color: #1c1917; } .ds-tab-count { display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; height: 20px; min-width: 1.25rem; padding: 0 6px; border-radius: 9999px; background: #e7e5e4; color: #57534e; font-size: 0.75rem; } .ds-tab-count-active { background: #1c1917; color: #fafaf9; } .ds-tab-underline { position: absolute; left: 8px; right: 8px; bottom: -1px; height: 2px; border-radius: 9999px; background: #1c1917; } .ds-tab:focus-visible { outline: 2px solid #a8a29e; outline-offset: -4px; border-radius: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Curator's Notebook",
+    "overview": "The interface is a private, considered notebook. Each day, an upstream curator (the Cowork automation) writes a fresh page of articles into it. The owner opens the notebook, scans the page, and marks each entry — keep, save for later, archive — the way you'd annotate a printed digest with a pen. Reading itself happens elsewhere; the notebook is the act of deciding. The visual system is paper-and-ink: warm off-white canvas, near-black text tinted toward the same hue, hairline rules instead of cards-that-float, generous serif headlines doing all the storytelling. Interactive controls are quiet and monochrome so the typography stays the loudest thing on the page. There is exactly one saturated color in the entire system — a red reserved for hearting an article — and that scarcity is the point. The system explicitly rejects two adjacent aesthetics that would dilute the notebook feel: the email-client / inbox UI (unread counters, bulk-action chrome, dense rows of checkboxes) and generic SaaS dashboards (gradient hero metrics, identical card grids, sidebar icon navs, 'welcome back' surfaces). This app belongs to one person; it reads that way.",
+    "keyCharacteristics": [
+      "Newsreader serif headlines on a warm stone canvas; system sans for all UI chrome.",
+      "Depth via tonal layering only — no box-shadows for decoration.",
+      "One earned saturated accent (Hearted Red); all other interactive color is monochrome stone.",
+      "Eight muted category accent pills, used as identification, never as brand color.",
+      "Refined-and-restrained components: rounded-lg buttons, rounded-full chips, rounded-2xl cards, all with comfortable 44px touch targets.",
+      "One serif rule: Newsreader is for voice (headlines, titles); never for controls or labels."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Hearted Red is the only saturated color in the system. Category pills are muted and named. Buttons are monochrome. Focus rings are stone. The interface is editorial first; color is identification, not decoration.", "section": "colors" },
+      { "name": "The Pure-Black Ban", "body": "No #000, no #fff for surfaces. All neutrals carry a warm tint — Tailwind's stone family. White (#ffffff) is allowed only as the elevated paper surface against the warm canvas; never as canvas itself.", "section": "colors" },
+      { "name": "The Serif-Only-For-Voice Rule", "body": "Newsreader appears exclusively on the page title, article headlines, and empty-state titles — the voice of the digest. Every interactive element (buttons, tabs, chips, labels) is sans. Serif is for what is; sans is for what you do.", "section": "typography" },
+      { "name": "The Italic-Only-For-Publication Rule", "body": "Italics appear in exactly one place: the publication name under each headline. Never in body copy. Never in UI labels.", "section": "typography" },
+      { "name": "The No-Shadow Rule", "body": "Box-shadows of any kind are prohibited as decoration. The lone exception is focus-visible outlines — those are Mute Ink rings, not blurs.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Newsreader for headlines, the page title, and empty-state titles. Charter / Lora / Georgia are fallbacks while Newsreader loads, not co-equal choices.",
+      "Do keep body copy at 0.95rem, line-height 1.6, max ~65ch (max-w-prose).",
+      "Do convey depth via the three-layer tonal stack: Canvas → Paper → Hover Surface. Three layers maximum.",
+      "Do reserve Hearted Red for the heart icon (fill, focus ring) and the Hearted filter chip's active state. Nowhere else.",
+      "Do keep filter chips at h-7 (28px) so they sit visually below the tab bar, never competing with it.",
+      "Do keep tap targets at ≥ 44px (the tap-target utility). Applies to every interactive element, not just buttons.",
+      "Do prefer focus-visible over focus for ring states, so mouse clicks don't leave a halo.",
+      "Do use the eight muted category accents for category pills. New categories without a deliberate palette extension fall back to Other (gray)."
+    ],
+    "donts": [
+      "Don't add box-shadows for decoration. Cards do not float. (Current shadow-sm / shadow-md on the article card is legacy; new components should use a tonal hover instead.)",
+      "Don't introduce a second saturated accent. The system has one color (Hearted Red), and it is earned by the act of hearting.",
+      "Don't style the interface like an email client / inbox UI — no unread bolding, no 'X new' counters, no checkbox-and-row bulk-action affordances, no action buttons crammed against a right edge. This is not an inbox; it is a digest to triage.",
+      "Don't style the interface like generic SaaS chrome — no gradient hero metrics, no identical card grids beyond what's already here, no sidebar icon nav, no 'Welcome back' surfaces.",
+      "Don't use side-stripe borders (border-left greater than 1px as a colored accent) on cards, callouts, or alerts. Full borders or none.",
+      "Don't use gradient text or background-clip: text. Solid colors only.",
+      "Don't use glassmorphism, backdrop-filter blurs, or frosted overlays.",
+      "Don't use Newsreader for chips, buttons, tab labels, or any UI control. Serif is for voice only.",
+      "Don't use italic anywhere except the publication name.",
+      "Don't invent new category colors. The eight Tailwind hues are the system; new categories fall back to Other until a deliberate palette extension is made.",
+      "Don't use #000 or #fff for body surfaces. Stone family only; white is reserved for the elevated Paper layer."
+    ]
+  }
+}

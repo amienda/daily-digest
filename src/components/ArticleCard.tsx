@@ -48,7 +48,7 @@ export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave
   const isArchive = article.status === 'archived' || article.status === 'saved_to_instapaper';
 
   return (
-    <article className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-stone-800 dark:bg-stone-900 sm:p-6">
+    <article className="group rounded-2xl border border-stone-200 bg-white p-5 transition hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:hover:bg-stone-800 sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <span
           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium tracking-tight ${cat.pill}`}
