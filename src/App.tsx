@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArticleCard } from './components/ArticleCard';
 import { DarkModeToggle } from './components/DarkModeToggle';
 import { EmptyState } from './components/EmptyState';
@@ -7,8 +7,13 @@ import { OwnerGate } from './components/OwnerGate';
 import { Tabs } from './components/Tabs';
 import { ToastViewport, type ToastMessage, type ToastVariant } from './components/Toast';
 import { useArticles } from './hooks/useArticles';
+import { useKeyboardTriage } from './hooks/useKeyboardTriage';
 import { useOwnerMode } from './hooks/useOwnerMode';
-import type { Article, TabKey } from './lib/types';
+import type { Article, ArticleStatus, TabKey } from './lib/types';
+
+function truncate(s: string, max: number) {
+  return s.length > max ? s.slice(0, max) + '…' : s;
+}
 
 const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
   today: {
@@ -25,6 +30,17 @@ const EMPTY_STATES: Record<TabKey, { title: string; description?: string }> = {
   },
 };
 
+const SHORTCUTS = [
+  { keys: 'J / ↓', label: 'Next article' },
+  { keys: 'K / ↑', label: 'Previous article' },
+  { keys: 'I', label: 'Save to Instapaper' },
+  { keys: 'R', label: 'Reading list' },
+  { keys: 'N', label: 'Not interested' },
+  { keys: 'H', label: 'Heart / unheart' },
+  { keys: '?', label: 'Show / hide shortcuts' },
+  { keys: 'Esc', label: 'Clear selection' },
+] as const;
+
 export default function App() {
   const { articles, loading, error, updateStatus, toggleHeart } = useArticles();
   const { isOwner, unlock, lock } = useOwnerMode();
@@ -33,16 +49,30 @@ export default function App() {
   const [filterPublication, setFilterPublication] = useState<string | null>(null);
   const [filterHearted, setFilterHearted] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [focusedCardIndex, setFocusedCardIndex] = useState<number | null>(null);
+  const [shortcutsVisible, setShortcutsVisible] = useState(false);
 
   function handleTabChange(tab: TabKey) {
     setActiveTab(tab);
     setFilterCategory(null);
     setFilterPublication(null);
+    setFocusedCardIndex(null);
   }
 
-  const pushToast = useCallback((message: string, variant: ToastVariant = 'info') => {
-    setToasts((curr) => [...curr, { id: Date.now() + Math.random(), message, variant }]);
-  }, []);
+  const pushToast = useCallback(
+    (
+      message: string,
+      variant: ToastVariant = 'info',
+      title?: string,
+      undoAction?: () => Promise<void>,
+    ) => {
+      setToasts((curr) => [
+        ...curr,
+        { id: Date.now() + Math.random(), message, variant, title, undoAction },
+      ]);
+    },
+    [],
+  );
 
   const dismissToast = useCallback((id: number) => {
     setToasts((curr) => curr.filter((t) => t.id !== id));
@@ -94,23 +124,55 @@ export default function App() {
     [visible, filterHearted, filterCategory, filterPublication],
   );
 
+  // Clamp focus when articles leave the list (triage action or filter change).
+  useEffect(() => {
+    if (focusedCardIndex !== null && focusedCardIndex >= filtered.length) {
+      setFocusedCardIndex(filtered.length > 0 ? filtered.length - 1 : null);
+    }
+  }, [filtered.length, focusedCardIndex]);
+
+  // Log raw load errors for debugging without surfacing them in the UI.
+  useEffect(() => {
+    if (error) console.error('Articles load error:', error);
+  }, [error]);
+
   const handleUpdateStatus = useCallback(
-    async (id: string, status: Article['status']) => {
+    async (id: string, status: ArticleStatus) => {
+      const article = articles.find((a) => a.id === id);
+      const prevStatus = article?.status;
+      const shortTitle = article ? truncate(article.headline, 40) : '';
       try {
         await updateStatus(id, status);
-        if (status === 'new') pushToast('Moved back to Today', 'success');
-        else if (status === 'reading_list') pushToast('Saved to reading list', 'success');
-        else if (status === 'archived') pushToast('Archived', 'info');
+
+        const undoAction: (() => Promise<void>) | undefined =
+          prevStatus != null
+            ? async () => {
+                try {
+                  await updateStatus(id, prevStatus);
+                } catch {
+                  pushToast('Undo failed — try refreshing', 'error');
+                }
+              }
+            : undefined;
+
+        const message =
+          status === 'new'
+            ? 'Moved to Today'
+            : status === 'reading_list'
+              ? 'Saved to reading list'
+              : 'Archived';
+        pushToast(message, status === 'archived' ? 'info' : 'success', shortTitle, undoAction);
       } catch (e) {
         pushToast(e instanceof Error ? e.message : 'Update failed', 'error');
         throw e;
       }
     },
-    [updateStatus, pushToast],
+    [articles, updateStatus, pushToast],
   );
 
   const handleInstapaperSave = useCallback(
     async (article: Article) => {
+      const shortTitle = truncate(article.headline, 40);
       try {
         const res = await fetch('/api/instapaper-save', {
           method: 'POST',
@@ -132,17 +194,67 @@ export default function App() {
         }
 
         await updateStatus(article.id, 'saved_to_instapaper');
-        pushToast('Saved to Instapaper', 'success');
+
+        const undoAction = async () => {
+          try {
+            await updateStatus(article.id, 'new');
+          } catch {
+            pushToast('Undo failed — try refreshing', 'error');
+          }
+        };
+        pushToast('Saved to Instapaper', 'success', shortTitle, undoAction);
       } catch (e) {
-        pushToast(
-          e instanceof Error ? e.message : 'Could not save to Instapaper',
-          'error',
-        );
+        console.error('Instapaper save error:', e);
+        pushToast("Couldn't save to Instapaper. Check your connection and try again.", 'error');
         throw e;
       }
     },
     [updateStatus, pushToast],
   );
+
+  const handleToggleHeart = useCallback(
+    async (id: string, hearted: boolean) => {
+      const article = articles.find((a) => a.id === id);
+      const shortTitle = article ? truncate(article.headline, 40) : '';
+      try {
+        await toggleHeart(id, hearted);
+        const undoAction = async () => {
+          try {
+            await toggleHeart(id, !hearted);
+          } catch {
+            pushToast('Undo failed — try refreshing', 'error');
+          }
+        };
+        pushToast(hearted ? 'Hearted' : 'Unhearted', 'success', shortTitle, undoAction);
+      } catch (e) {
+        pushToast(e instanceof Error ? e.message : 'Update failed', 'error');
+        throw e;
+      }
+    },
+    [articles, toggleHeart, pushToast],
+  );
+
+  useKeyboardTriage({
+    articles: filtered,
+    focusedIndex: focusedCardIndex,
+    shortcutsVisible,
+    isOwner,
+    enabled: !loading && !error,
+    callbacks: {
+      onUpdateStatus: handleUpdateStatus,
+      onInstapaperSave: handleInstapaperSave,
+      onToggleHeart: handleToggleHeart,
+      setFocusedIndex: setFocusedCardIndex,
+      setShortcutsVisible,
+    },
+  });
+
+  const shortcutsBtnClass = [
+    'hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-full border text-stone-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400',
+    shortcutsVisible
+      ? 'border-stone-300 bg-stone-100 text-stone-700 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-300'
+      : 'border-stone-200 bg-white hover:bg-stone-100 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-400 dark:hover:bg-stone-800',
+  ].join(' ');
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100">
@@ -164,10 +276,51 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShortcutsVisible((v) => !v)}
+              aria-label="Keyboard shortcuts"
+              aria-pressed={shortcutsVisible}
+              title="Keyboard shortcuts (?)"
+              className={shortcutsBtnClass}
+            >
+              <span className="text-sm font-medium leading-none" aria-hidden="true">?</span>
+            </button>
             <OwnerGate isOwner={isOwner} onUnlock={unlock} onLock={lock} />
             <DarkModeToggle />
           </div>
         </header>
+
+        {/* Keyboard shortcuts panel — desktop only, inline */}
+        {shortcutsVisible && (
+          <div className="hidden sm:block mb-6 rounded-xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-medium tracking-tight text-stone-500 dark:text-stone-400">
+                Keyboard shortcuts
+              </p>
+              <button
+                type="button"
+                onClick={() => setShortcutsVisible(false)}
+                aria-label="Close shortcuts"
+                className="rounded text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 dark:hover:text-stone-200"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+              {SHORTCUTS.map(({ keys, label }) => (
+                <div key={keys} className="flex items-center gap-2.5">
+                  <kbd className="inline-flex min-w-[2.75rem] items-center justify-center rounded bg-stone-100 px-1.5 py-0.5 font-mono text-xs text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+                    {keys}
+                  </kbd>
+                  <span className="text-sm text-stone-600 dark:text-stone-400">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="mb-6">
@@ -194,7 +347,7 @@ export default function App() {
         {error ? (
           <EmptyState
             title="Couldn't load articles"
-            description={error}
+            description="Check your connection and try refreshing."
           />
         ) : loading ? (
           <div className="space-y-4">
@@ -217,14 +370,15 @@ export default function App() {
           />
         ) : (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {filtered.map((article) => (
+            {filtered.map((article, idx) => (
               <ArticleCard
                 key={article.id}
                 article={article}
                 isOwner={isOwner}
+                isFocused={idx === focusedCardIndex}
                 onUpdateStatus={handleUpdateStatus}
                 onInstapaperSave={handleInstapaperSave}
-                onToggleHeart={toggleHeart}
+                onToggleHeart={handleToggleHeart}
               />
             ))}
           </div>

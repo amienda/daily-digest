@@ -6,6 +6,8 @@ export interface ToastMessage {
   id: number;
   message: string;
   variant: ToastVariant;
+  title?: string;
+  undoAction?: () => Promise<void>;
 }
 
 interface ToastViewportProps {
@@ -34,6 +36,11 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: 
     return () => clearTimeout(t);
   }, [toast.id, onDismiss]);
 
+  function handleUndo() {
+    onDismiss(toast.id);
+    void toast.undoAction?.();
+  }
+
   return (
     <div
       role="status"
@@ -43,13 +50,31 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: 
         VARIANT_STYLES[toast.variant],
       ].join(' ')}
     >
-      <span className={`mt-1.5 inline-block h-2 w-2 rounded-full ${DOT_STYLES[toast.variant]}`} />
-      <span className="flex-1 leading-relaxed">{toast.message}</span>
+      <span className={`mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full ${DOT_STYLES[toast.variant]}`} />
+      <span className="flex-1 leading-relaxed">
+        {toast.title && (
+          <span className="mb-0.5 block truncate text-xs text-stone-400 dark:text-stone-500">
+            {toast.title}
+          </span>
+        )}
+        <span className="inline-flex flex-wrap items-baseline gap-x-2">
+          <span>{toast.message}</span>
+          {toast.undoAction && (
+            <button
+              type="button"
+              onClick={handleUndo}
+              className="font-medium underline underline-offset-2 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 dark:focus-visible:ring-stone-500 rounded"
+            >
+              Undo
+            </button>
+          )}
+        </span>
+      </span>
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
         aria-label="Dismiss"
-        className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+        className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 rounded"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M18 6L6 18M6 6l12 12" />

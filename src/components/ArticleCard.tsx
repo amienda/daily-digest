@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Article, ArticleStatus } from '../lib/types';
 import { getCategoryStyle } from '../lib/categories';
 
 interface ArticleCardProps {
   article: Article;
   isOwner: boolean;
+  isFocused?: boolean;
   onUpdateStatus: (id: string, status: ArticleStatus) => Promise<void>;
   onInstapaperSave: (article: Article) => Promise<void>;
   onToggleHeart: (id: string, hearted: boolean) => Promise<void>;
@@ -22,10 +23,17 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave, onToggleHeart }: ArticleCardProps) {
+export function ArticleCard({ article, isOwner, isFocused = false, onUpdateStatus, onInstapaperSave, onToggleHeart }: ArticleCardProps) {
   const [pending, setPending] = useState<PendingAction>(null);
+  const articleRef = useRef<HTMLElement>(null);
   const cat = getCategoryStyle(article.category);
   const disabled = pending !== null;
+
+  useEffect(() => {
+    if (isFocused) {
+      articleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [isFocused]);
 
   async function handle(action: Exclude<PendingAction, null>) {
     if (disabled) return;
@@ -48,13 +56,28 @@ export function ArticleCard({ article, isOwner, onUpdateStatus, onInstapaperSave
   const isArchive = article.status === 'archived' || article.status === 'saved_to_instapaper';
 
   return (
-    <article className="group rounded-2xl border border-stone-200 bg-white p-5 transition hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:hover:bg-stone-800 sm:p-6">
+    <article
+      ref={articleRef}
+      className={[
+        'group rounded-2xl border p-5 transition sm:p-6',
+        isFocused
+          ? 'border-stone-400 bg-white hover:bg-stone-50 dark:border-stone-500 dark:bg-stone-900 dark:hover:bg-stone-800'
+          : 'border-stone-200 bg-white hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:hover:bg-stone-800',
+      ].join(' ')}
+    >
       <div className="flex items-center justify-between gap-3">
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium tracking-tight ${cat.pill}`}
-        >
-          {cat.label}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium tracking-tight ${cat.pill}`}
+          >
+            {cat.label}
+          </span>
+          {article.status === 'saved_to_instapaper' && (
+            <span className="inline-flex items-center rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-500 dark:bg-stone-800 dark:text-stone-400">
+              Instapaper
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {/* Heart: clickable for owner, read-only indicator for visitors */}
           {(isOwner || article.hearted) && (
