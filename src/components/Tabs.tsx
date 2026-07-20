@@ -17,7 +17,7 @@ export function Tabs({ active, counts, onChange }: TabsProps) {
     <nav
       role="tablist"
       aria-label="Article queue"
-      className="flex gap-1 overflow-x-auto border-b border-stone-200 dark:border-stone-800"
+      className="no-scrollbar flex gap-1 overflow-x-auto border-b border-stone-200 dark:border-stone-800"
     >
       {TABS.map(({ key, label }) => {
         const isActive = key === active;

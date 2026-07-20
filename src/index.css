@@ -29,4 +29,14 @@
   .tap-target {
     min-height: 44px;
   }
+
+  /* Keep horizontal scroll/swipe (e.g. the tab row on narrow screens)
+     without showing the OS scrollbar chrome. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
