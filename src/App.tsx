@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArchiveOldButton } from './components/ArchiveOldButton';
 import { ArticleCard } from './components/ArticleCard';
 import { DarkModeToggle } from './components/DarkModeToggle';
 import { EmptyState } from './components/EmptyState';
@@ -62,7 +63,7 @@ const SHORTCUTS = [
 ] as const;
 
 export default function App() {
-  const { articles, loading, error, updateStatus, toggleHeart } = useArticles();
+  const { articles, loading, error, updateStatus, toggleHeart, bulkUpdateStatuses } = useArticles();
   const { isOwner, unlock, lock } = useOwnerMode();
   const [activeTab, setActiveTab] = useState<TabKey>('today');
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
@@ -120,6 +121,11 @@ export default function App() {
     reading_list: grouped.reading.length,
     archive: grouped.archive.length,
   };
+
+  // Pool eligible for the "archive old posts" sweep — untouched Today items and
+  // saved-but-unread Reading List items. Independent of the active tab/filters,
+  // since this is a maintenance action rather than a view action.
+  const archivable = useMemo(() => [...grouped.today, ...grouped.reading], [grouped]);
 
   const visible =
     activeTab === 'today'
@@ -205,6 +211,41 @@ export default function App() {
       }
     },
     [articles, updateStatus, pushToast],
+  );
+
+  const handleBulkArchive = useCallback(
+    async (ids: string[]) => {
+      if (ids.length === 0) return;
+      // Snapshot each article's current status so a batch can be undone as one unit,
+      // restoring 'new' items to Today and 'reading_list' items to Reading List.
+      const snapshot = ids
+        .map((id) => articles.find((a) => a.id === id))
+        .filter((a): a is Article => a != null)
+        .map((a) => ({ id: a.id, status: a.status }));
+
+      try {
+        await bulkUpdateStatuses(ids.map((id) => ({ id, status: 'archived' as ArticleStatus })));
+
+        const undoAction = async () => {
+          try {
+            await bulkUpdateStatuses(snapshot);
+          } catch {
+            pushToast('Undo failed — try refreshing', 'error');
+          }
+        };
+
+        pushToast(
+          `Archived ${ids.length} article${ids.length === 1 ? '' : 's'}`,
+          'info',
+          undefined,
+          undoAction,
+        );
+      } catch (e) {
+        pushToast(e instanceof Error ? e.message : 'Archive failed', 'error');
+        throw e;
+      }
+    },
+    [articles, bulkUpdateStatuses, pushToast],
   );
 
   const handleInstapaperSave = useCallback(
@@ -365,9 +406,16 @@ export default function App() {
         )}
 
         {/* Tabs */}
-        <div className="mb-6">
+        <div className={isOwner && !loading && !error && archivable.length > 0 ? 'mb-1' : 'mb-6'}>
           <Tabs active={activeTab} counts={counts} onChange={handleTabChange} />
         </div>
+
+        {/* Maintenance sweep — owner-only, tucked under the tabs rather than a bulk-action row */}
+        {isOwner && !loading && !error && archivable.length > 0 && (
+          <div className="mb-5 flex justify-end pt-2">
+            <ArchiveOldButton articles={archivable} onArchive={handleBulkArchive} />
+          </div>
+        )}
 
         {/* Filters — only shown when there are articles in this tab */}
         {!loading && !error && visible.length > 0 && (
