@@ -406,32 +406,33 @@ export default function App() {
         )}
 
         {/* Tabs */}
-        <div className={isOwner && !loading && !error && archivable.length > 0 ? 'mb-1' : 'mb-6'}>
+        <div className="mb-6">
           <Tabs active={activeTab} counts={counts} onChange={handleTabChange} />
         </div>
 
-        {/* Maintenance sweep — owner-only, tucked under the tabs rather than a bulk-action row */}
-        {isOwner && !loading && !error && archivable.length > 0 && (
-          <div className="mb-5 flex justify-end pt-2">
-            <ArchiveOldButton articles={archivable} onArchive={handleBulkArchive} />
-          </div>
-        )}
-
-        {/* Filters — only shown when there are articles in this tab */}
-        {!loading && !error && visible.length > 0 && (
-          <div className="mb-5">
-            <FilterBar
-              categories={availableCategories}
-              publications={availablePublications}
-              activeCategory={filterCategory}
-              activePublication={filterPublication}
-              filterHearted={filterHearted}
-              searchQuery={filterSearch}
-              onCategoryChange={setFilterCategory}
-              onPublicationChange={setFilterPublication}
-              onHeartedChange={setFilterHearted}
-              onSearchChange={setFilterSearch}
-            />
+        {/* Filters + maintenance sweep share one row so the filters never shift
+            when the archive control appears or disappears. */}
+        {!loading && !error && (visible.length > 0 || (isOwner && archivable.length > 0)) && (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <div className="min-w-0">
+              {visible.length > 0 && (
+                <FilterBar
+                  categories={availableCategories}
+                  publications={availablePublications}
+                  activeCategory={filterCategory}
+                  activePublication={filterPublication}
+                  filterHearted={filterHearted}
+                  searchQuery={filterSearch}
+                  onCategoryChange={setFilterCategory}
+                  onPublicationChange={setFilterPublication}
+                  onHeartedChange={setFilterHearted}
+                  onSearchChange={setFilterSearch}
+                />
+              )}
+            </div>
+            {isOwner && archivable.length > 0 && (
+              <ArchiveOldButton articles={archivable} onArchive={handleBulkArchive} />
+            )}
           </div>
         )}
 
